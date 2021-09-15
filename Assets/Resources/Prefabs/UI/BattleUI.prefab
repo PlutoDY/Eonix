@@ -1833,6 +1833,7 @@ GameObject:
   - component: {fileID: 4911291482311511972}
   - component: {fileID: 839951645884955901}
   - component: {fileID: 6816649452173723543}
+  - component: {fileID: 142459978424665055}
   m_Layer: 5
   m_Name: MonsterHp
   m_TagString: Untagged
@@ -1899,6 +1900,18 @@ MonoBehaviour:
   m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &142459978424665055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6994859089049503420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c6f3dab64abf044804010b0f4f0a28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7147554249333153303
 GameObject:
   m_ObjectHideFlags: 0
@@ -2302,6 +2315,7 @@ GameObject:
   - component: {fileID: 817551943884187530}
   - component: {fileID: 7636847228152850041}
   - component: {fileID: 5437273459111615980}
+  - component: {fileID: 7895451655087432181}
   m_Layer: 5
   m_Name: HeroHp
   m_TagString: Untagged
@@ -2378,6 +2392,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 745e31049787b95478dd7ed58f356eda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7895451655087432181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8508517564620009439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c6f3dab64abf044804010b0f4f0a28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8614726515526209377

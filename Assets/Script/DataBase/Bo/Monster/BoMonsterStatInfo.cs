@@ -40,6 +40,13 @@ namespace Eonix.DB
             set { hp = value; }
         }
 
+        private float maxHp;
+        public float MaxHp
+        {
+            get { return maxHp; }
+            set { maxHp = value; }
+        }
+
         public BoMonsterStatInfo(SDMonsterStatInfo sdMonsterStatInfo)
         {
             this.sdMonsterStatInfo = sdMonsterStatInfo;
@@ -47,7 +54,7 @@ namespace Eonix.DB
             Power = sdMonsterStatInfo.power;
             Defense = sdMonsterStatInfo.defense;
             DefiniteAttackStat = sdMonsterStatInfo.definiteAttackStat;
-            Hp = sdMonsterStatInfo.hp;
+            MaxHp = Hp = sdMonsterStatInfo.hp;
         }
     }
 }

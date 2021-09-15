@@ -146,7 +146,7 @@ namespace Eonix.Actor
 
             CanMove = true;
 
-            Power = heroStatInfo.Power * (1+(heroStatInfo.DefenseFactor*10*heroLevel));
+            Power = heroStatInfo.Power  + (heroStatInfo.Power * (heroLevel * 0.1f));
             Defense = heroStatInfo.Defense * (1 + (heroStatInfo.DefenseFactor * heroLevel));
             MaxHp = CurrentHp = heroStatInfo.Hp * (1 + (heroStatInfo.HpFactor) * heroLevel);
 

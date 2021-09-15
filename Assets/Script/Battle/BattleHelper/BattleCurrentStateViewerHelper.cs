@@ -8,7 +8,6 @@ namespace Eonix.Battle {
     public class BattleCurrentStateViewerHelper : MonoBehaviour
     {
         Text stateViewerObject_TextComponent;
-
         Text damagePercent_TextComponent;
 
         Text heroStatObject_TextComponent;

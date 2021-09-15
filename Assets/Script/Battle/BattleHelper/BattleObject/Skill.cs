@@ -23,6 +23,9 @@ namespace Eonix.Battle
         private int hitRate;
         public int HitRate { get { return hitRate; } }
 
+        private float currentSkillDamage;
+        public float CurrentSkillDamage { get { return currentSkillDamage; } }
+
         public void InitObject()
         {
             _image = GetComponent<Image>();
@@ -46,9 +49,9 @@ namespace Eonix.Battle
             _image.sprite = Define.SpriteArtPath.sprite(Define.SpriteArtPath.ArtType.Skill, path);
         }
 
-        public void SetSkillExplainText(float skillDamage, int hitRate)
+        public void SetSkillExplainText(float skillDamagePercent, int hitRate)
         {
-            var damage = skillInfo.sdHeroSkillInfo.skillDamage * skillDamage;
+            currentSkillDamage = skillInfo.sdHeroSkillInfo.skillDamage * skillDamagePercent;
 
             this.hitRate = hitRate;
 
@@ -58,7 +61,7 @@ namespace Eonix.Battle
             else if (skillInfo.sdHeroSkillInfo.skillType == Define.Actor.SkillType.Upgrade) type = "강화";
             else type = "연타";
 
-            var explainText = $"스킬 이름 : {skillInfo.sdHeroSkillInfo.skillName}\n공격 방식 : {type}\n데미지 : {damage}\n적중확률 : {hitRate}%";
+            var explainText = $"스킬 이름 : {skillInfo.sdHeroSkillInfo.skillName}\n공격 방식 : {type}\n데미지 : {CurrentSkillDamage}\n적중확률 : {hitRate}%";
 
             skillExplain_TextComponent.text = explainText;
         }

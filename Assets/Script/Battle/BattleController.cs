@@ -125,6 +125,15 @@ namespace Eonix.Battle
         private int attackCount = 1;
 
         [SerializeField]
+        private int attackSuccessCount = 0;
+
+        [SerializeField]
+        private float heroGiveDamage = 0.0f;
+
+        [SerializeField]
+        private float monsterGiveDamage = 0.0f;
+
+        [SerializeField]
         private Skill currentCastingSkill;
         #endregion
 
@@ -135,6 +144,8 @@ namespace Eonix.Battle
             battleDiceHelper = GetComponent<BattleDiceHelper>();
             battleCurrentStateViewerHelper = GetComponent<BattleCurrentStateViewerHelper>();
             battleHeroSkillHelper = GetComponent<BattleHeroSkillHelper>();
+            battleHpHelper = GetComponent<BattleHpHelper>();
+
 
             base.Start();
 
@@ -206,7 +217,8 @@ namespace Eonix.Battle
             }
 
         }
-            private void InstantiateUI()
+        
+        private void InstantiateUI()
         {
             var path = Define.PrefabsPath.UIPath(PrefabsUIs.BattleUI);
             var instantiatedObject = Instantiate(RM.Instance.LoadObject(path)).gameObject;
@@ -234,6 +246,8 @@ namespace Eonix.Battle
         {
             battleCurrentStateViewerHelper.InitStateObject(uIBattle.StateObject_Text, uIBattle.DamagePercentObject_Text);
             battleCurrentStateViewerHelper.InitStatObject(uIBattle.StatName_Text[0], uIBattle.StatName_Text[1]);
+
+            battleHpHelper.HpBarsInit(uIBattle.HpBars);
         }
 
         private void InitSkillObject()
@@ -248,6 +262,14 @@ namespace Eonix.Battle
         {
             currentBattlePhase = BattlePhase.Power_Resistance;
 
+            attackSuccessCount = 0;
+            heroGiveDamage = 0;
+            monsterGiveDamage = 0;
+
+            CanSkipPhase = true;
+
+            currentCastingSkill = null;
+
             uIBattle.Open();
 
             battleDiceHelper.StartRolling();
@@ -257,6 +279,8 @@ namespace Eonix.Battle
             GameManager.Input.KeyAction += StopRolling;
 
             battleHeroSkillHelper.InitSkillInfo(Hero);
+
+            battleHpHelper.ResetImageAndText(Hero, Monster);
         }
 
         public void StopRolling()
@@ -277,6 +301,7 @@ namespace Eonix.Battle
                         break;
                     case BattlePhase.SkillAttack:
                         tu = battleCalculateHelper.CalculationDice(currentCastingSkill.HitRate);
+                        --attackCount;
                         break;
                 }
 
@@ -294,6 +319,10 @@ namespace Eonix.Battle
                     {
                         SetDamage((heroValue - monsterValue)*10);
                     }
+                }
+                else if(currentBattlePhase == BattlePhase.SkillAttack)
+                {
+                    DamageCalculation();
                 }
 
                 
@@ -329,9 +358,15 @@ namespace Eonix.Battle
             }
             else if((currentBattlePhase == BattlePhase.SkillAttack) && attackCount == 0)
             {
-                currentBattlePhase = BattlePhase.HpAdjustment;
+                if(attackSuccessCount == 0)
+                {
+                    currentBattlePhase = BattlePhase.End;
+                }
+                else
+                {
+                    currentBattlePhase = BattlePhase.HpAdjustment;
+                }
             }
-
             CheckBattlePhase();
         }
 
@@ -343,11 +378,6 @@ namespace Eonix.Battle
             if (force) skillHitRatePercent[1] = 100;
             else skillHitRatePercent[1] = ((value - 5) >= 0) ? value - 5 : 0;
             skillHitRatePercent[2] = ((value + 10) <= 100) ? value + 10 : 100;
-
-
-            Debug.Log($"value = {value}");
-
-            Debug.Log($"skillHitratePercent | 0 : {skillHitRatePercent[0]} | 1 : {skillHitRatePercent[1]} | 2 : {skillHitRatePercent[2]}");
 
             battleHeroSkillHelper.SetSkillsExplain(skillDamagePercent, skillHitRatePercent);
         }
@@ -369,9 +399,9 @@ namespace Eonix.Battle
                     uIBattle.SetActiveSkillImages(true);
                     break;
                 case BattlePhase.SkillAttack:
-                    attackCount--;
                     break;
                 case BattlePhase.HpAdjustment:
+                    HpAdjusting();
                     break;
                 case BattlePhase.End:
                     break;
@@ -402,6 +432,31 @@ namespace Eonix.Battle
             NextPhase();
 
             CanSkipPhase = true;
+        }
+
+        public void DamageCalculation()
+        {
+            if (isWin)
+            {
+                heroGiveDamage += currentCastingSkill.CurrentSkillDamage;
+                attackSuccessCount++;
+            }
+            else
+            {
+                monsterGiveDamage += currentCastingSkill.CurrentSkillDamage;
+            }
+        }
+
+        public void HpAdjusting()
+        {
+            if (attackSuccessCount != 0)
+            {
+                battleHpHelper.SetHeroHpBar(hero.CurrentHp, hero.MaxHp,monsterGiveDamage);
+            }
+            else
+            {
+                battleHpHelper.SetMonsterHpBar(Monster.Hp, Monster.Monsterinfo.boMonsterStatInfo.MaxHp, monsterGiveDamage);
+            }
         }
 
         #endregion
