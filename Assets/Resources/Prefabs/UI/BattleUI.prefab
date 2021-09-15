@@ -1912,6 +1912,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13c6f3dab64abf044804010b0f4f0a28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fillObject_ImageComponent: {fileID: 0}
+  hpAmountObject_TextComponenet: {fileID: 0}
 --- !u!1 &7147554249333153303
 GameObject:
   m_ObjectHideFlags: 0
@@ -2406,6 +2408,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13c6f3dab64abf044804010b0f4f0a28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fillObject_ImageComponent: {fileID: 0}
+  hpAmountObject_TextComponenet: {fileID: 0}
 --- !u!1 &8614726515526209377
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,12 +38,16 @@ namespace Eonix.Battle {
             currentHpAmount = currentHp;
             maxHpAmount = maxHp;
 
-            reductionFillAmount = reductionHp/maxHp;
-            decreasePerFrame = reductionFillAmount / 100f;
-            targetForDecreasing = (currentHp - reductionHp) / maxHp;
+            var redu = Mathf.Ceil(reductionHp);
 
-            reductionTextAmount = reductionHp;
+            reductionFillAmount = redu / maxHp;
+            decreasePerFrame = reductionFillAmount / 100f;
+            targetForDecreasing = (currentHp - redu) / maxHp;
+
+            reductionTextAmount = redu;
             decreaseAmountPerFrame = reductionTextAmount / 100f;
+
+            Debug.Log($"currentHp = {currentHp} | maxHp = {maxHp} | reductionHp = {redu}");
 
             StartCoroutine(ReductingHpBar());
         }
@@ -56,11 +60,20 @@ namespace Eonix.Battle {
 
                 fillObject_ImageComponent.fillAmount = f;
 
-                hpAmountObject_TextComponenet.text = $"{(int)(currentHpAmount) / (int)(maxHpAmount)}";
+                hpAmountObject_TextComponenet.text = $"{(int)(currentHpAmount)} / {(int)(maxHpAmount)}";
 
                 currentHpAmount -= decreaseAmountPerFrame;
 
-                yield return new WaitForSeconds(1f);
+                if((int)currentHpAmount == 0)
+                {
+                    targetForDecreasing = 0.0f;
+
+                    hpAmountObject_TextComponenet.text = "KILL!";
+
+                    break;
+                }
+
+                yield return new WaitForSeconds(0.01f);
             }
 
             fillObject_ImageComponent.fillAmount = targetForDecreasing;

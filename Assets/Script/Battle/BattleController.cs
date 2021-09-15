@@ -451,11 +451,13 @@ namespace Eonix.Battle
         {
             if (attackSuccessCount != 0)
             {
-                battleHpHelper.SetHeroHpBar(hero.CurrentHp, hero.MaxHp,monsterGiveDamage);
+                var monsterMaxHp = Monster.Monsterinfo.boMonsterStatInfo.MaxHp;
+
+                battleHpHelper.SetMonsterHpBar(Monster.Hp, monsterMaxHp, heroGiveDamage);
             }
             else
             {
-                battleHpHelper.SetMonsterHpBar(Monster.Hp, Monster.Monsterinfo.boMonsterStatInfo.MaxHp, monsterGiveDamage);
+                battleHpHelper.SetHeroHpBar(Hero.CurrentHp ,Hero.MaxHp, monsterGiveDamage);
             }
         }
 
