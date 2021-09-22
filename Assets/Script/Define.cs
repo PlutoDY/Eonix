@@ -196,7 +196,7 @@ namespace Eonix.Define
         public static List<string> attackHeroToMonsterText = new List<string>();
         public static List<string> attackMonsterToHeroText = new List<string>();
 
-        public enum BattlePhase { Power_Resistance, Power_Defense, SkillSelect ,SkillAttack, HpAdjustment, End}
+        public enum BattlePhase { Power_Resistance, Power_Defense, SkillSelect ,SkillAttack, HpAdjustment,SkillCasting ,End}
 
         public static void InitText()
         {

@@ -150,6 +150,8 @@ namespace Eonix.Actor
 
         public void HeroMove(MouseEvent evt)
         {
+            Debug.Log("CLICK");
+
             ray = stageCam.ScreenPointToRay(Input.mousePosition);
 
             if(Physics.Raycast(ray, out hit, int.MaxValue, _mask))

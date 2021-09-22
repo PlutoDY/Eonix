@@ -51,7 +51,7 @@ namespace Eonix.Battle
 
         public void SetSkillExplainText(float skillDamagePercent, int hitRate)
         {
-            currentSkillDamage = skillInfo.sdHeroSkillInfo.skillDamage * skillDamagePercent;
+            currentSkillDamage = Mathf.Round(skillInfo.sdHeroSkillInfo.skillDamage * skillDamagePercent * 100) * 0.01f;
 
             this.hitRate = hitRate;
 
@@ -61,7 +61,7 @@ namespace Eonix.Battle
             else if (skillInfo.sdHeroSkillInfo.skillType == Define.Actor.SkillType.Upgrade) type = "강화";
             else type = "연타";
 
-            var explainText = $"스킬 이름 : {skillInfo.sdHeroSkillInfo.skillName}\n공격 방식 : {type}\n데미지 : {Mathf.Ceil(CurrentSkillDamage)}\n적중확률 : {hitRate}%";
+            var explainText = $"스킬 이름 : {skillInfo.sdHeroSkillInfo.skillName}\n공격 방식 : {type}\n데미지 : {CurrentSkillDamage}\n적중확률 : {hitRate}%";
 
             skillExplain_TextComponent.text = explainText;
         }

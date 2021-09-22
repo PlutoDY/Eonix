@@ -19,7 +19,7 @@ namespace Eonix.Battle {
 
             damagePercent_TextComponent = damagePercentTextComponent;
 
-            ResetStateText();
+            ResetTexts();
         }
 
         public void InitStatObject(Text heroStatObjectTextComponent, Text monsterStatObjectTextComponent)
@@ -29,7 +29,7 @@ namespace Eonix.Battle {
             SetStatText(0);
         }
 
-        public void ResetStateText()
+        public void ResetTexts()
         {
             stateViewerObject_TextComponent.text = StateText.stateText[0];
             damagePercent_TextComponent.text = string.Empty;

@@ -173,7 +173,6 @@ namespace Eonix.Actor
             IsLive = false;
             battleController.CurrentGetExp += Monsterinfo.boMonsterInfo.GetExp;
 
-            Debug.Log(Monsterinfo.boMonsterInfo.GetExp);
             gameObject.SetActive(false);
             actorController.monsterList.Remove(this);
             actorController.deadMonsterList.Add(this);

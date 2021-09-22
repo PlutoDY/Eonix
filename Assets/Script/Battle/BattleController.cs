@@ -260,15 +260,7 @@ namespace Eonix.Battle
 
         public void BattleStart()
         {
-            currentBattlePhase = BattlePhase.Power_Resistance;
-
-            attackSuccessCount = 0;
-            heroGiveDamage = 0;
-            monsterGiveDamage = 0;
-
-            CanSkipPhase = true;
-
-            currentCastingSkill = null;
+            ResetValues();
 
             uIBattle.Open();
 
@@ -279,8 +271,23 @@ namespace Eonix.Battle
             GameManager.Input.KeyAction += StopRolling;
 
             battleHeroSkillHelper.InitSkillInfo(Hero);
+            battleCurrentStateViewerHelper.ResetTexts();
 
             battleHpHelper.ResetImageAndText(Hero, Monster);
+        }
+
+        private void ResetValues()
+        {
+            currentBattlePhase = BattlePhase.Power_Resistance;
+
+            attackCount = 1;
+            attackSuccessCount = 0;
+            heroGiveDamage = 0;
+            monsterGiveDamage = 0;
+
+            CanSkipPhase = true;
+
+            currentCastingSkill = null;
         }
 
         public void StopRolling()
@@ -342,6 +349,9 @@ namespace Eonix.Battle
 
         public void NextPhase()
         {
+
+            Debug.Log($"currnetBattlePhase = {currentBattlePhase}");
+
             if(isWin && ((currentBattlePhase == BattlePhase.Power_Resistance) || (currentBattlePhase == BattlePhase.Power_Defense)))
             {
                 battleCurrentStateViewerHelper.SetStateText(State.Start);
@@ -358,15 +368,13 @@ namespace Eonix.Battle
             }
             else if((currentBattlePhase == BattlePhase.SkillAttack) && attackCount == 0)
             {
-                if(attackSuccessCount == 0)
-                {
-                    currentBattlePhase = BattlePhase.End;
-                }
-                else
-                {
-                    currentBattlePhase = BattlePhase.HpAdjustment;
-                }
+                currentBattlePhase = BattlePhase.HpAdjustment;
             }
+            else if(currentBattlePhase == BattlePhase.HpAdjustment)
+            {
+                currentBattlePhase = BattlePhase.End;
+            }
+
             CheckBattlePhase();
         }
 
@@ -398,12 +406,11 @@ namespace Eonix.Battle
                     battleCurrentStateViewerHelper.SetStatText(2);
                     uIBattle.SetActiveSkillImages(true);
                     break;
-                case BattlePhase.SkillAttack:
-                    break;
                 case BattlePhase.HpAdjustment:
                     HpAdjusting();
                     break;
                 case BattlePhase.End:
+                    StartCloseBattleUI();
                     break;
                 default:
                     break;
@@ -447,7 +454,7 @@ namespace Eonix.Battle
             }
         }
 
-        public void HpAdjusting()
+        private void HpAdjusting()
         {
             if (attackSuccessCount != 0)
             {
@@ -459,8 +466,35 @@ namespace Eonix.Battle
             {
                 battleHpHelper.SetHeroHpBar(Hero.CurrentHp ,Hero.MaxHp, monsterGiveDamage);
             }
+
         }
 
+        public void StartCloseBattleUI()
+        {
+            HpAdjustmentObject();
+
+            uIBattle.CloseStart();
+
+            hero.CanMove = false;
+
+            var actorController = ControllerManager.Instance.GetController<ActorController>();
+
+            GameManager.Input.KeyAction = null;
+            GameManager.Input.MouseAction += actorController.HeroMove;
+
+            actorController.CheckSkipOrEndTurn();
+        }
+
+        public void HpAdjustmentObject()
+        {
+            if(attackSuccessCount != 0)
+            {
+                monster.Hp -= heroGiveDamage;
+            }
+            else {
+                hero.CurrentHp -= monsterGiveDamage;
+            }
+        }
         #endregion
     }
 }

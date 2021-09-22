@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Eonix.Controller;
 
 namespace Eonix.Battle {
     public class HpBar : MonoBehaviour
@@ -10,15 +11,10 @@ namespace Eonix.Battle {
 
         public Text hpAmountObject_TextComponenet;
 
-        private float reductionFillAmount;
-        private float decreasePerFrame;
-        private float targetForDecreasing;
-
-        private float reductionTextAmount;
-        private float decreaseAmountPerFrame;
-
-        private float currentHpAmount;
-        private float maxHpAmount;
+        decimal currentHp;
+        decimal maxHp;
+        decimal damage;
+        decimal frameDecreaseHp;
 
         public void InitCompoenet() 
         {
@@ -35,48 +31,44 @@ namespace Eonix.Battle {
 
         public void SetHpBarAndAmount(float currentHp, float maxHp, float reductionHp)
         {
-            currentHpAmount = currentHp;
-            maxHpAmount = maxHp;
+            this.currentHp = (decimal)currentHp;
 
-            var redu = Mathf.Ceil(reductionHp);
+            this.maxHp = (decimal)maxHp;
 
-            reductionFillAmount = redu / maxHp;
-            decreasePerFrame = reductionFillAmount / 100f;
-            targetForDecreasing = (currentHp - redu) / maxHp;
+            damage = (decimal)reductionHp;
 
-            reductionTextAmount = redu;
-            decreaseAmountPerFrame = reductionTextAmount / 100f;
+            frameDecreaseHp = damage / 100m;
 
-            Debug.Log($"currentHp = {currentHp} | maxHp = {maxHp} | reductionHp = {redu}");
 
             StartCoroutine(ReductingHpBar());
         }
 
         private IEnumerator ReductingHpBar()
         {
-            for(float f = fillObject_ImageComponent.fillAmount; f >= targetForDecreasing; f -= decreasePerFrame)
+            var percent = (currentHp - frameDecreaseHp) / maxHp;
+
+            fillObject_ImageComponent.fillAmount = Mathf.Round((float)percent * 100) * 0.01f;
+
+            for(int i = 0;i < 100; i++)
             {
-                Debug.Log($"Current FillObject ImageComponent FillAmount = {fillObject_ImageComponent.fillAmount}");
+                currentHp -= frameDecreaseHp;
 
-                fillObject_ImageComponent.fillAmount = f;
+                percent = currentHp / maxHp;
 
-                hpAmountObject_TextComponenet.text = $"{(int)(currentHpAmount)} / {(int)(maxHpAmount)}";
+                fillObject_ImageComponent.fillAmount = Mathf.Round((float)percent * 100) * 0.01f;
 
-                currentHpAmount -= decreaseAmountPerFrame;
-
-                if((int)currentHpAmount == 0)
-                {
-                    targetForDecreasing = 0.0f;
-
-                    hpAmountObject_TextComponenet.text = "KILL!";
-
-                    break;
-                }
+                if ((int)currentHp <= 0) { hpAmountObject_TextComponenet.text = $"ZERO"; }
+                else hpAmountObject_TextComponenet.text = $"{(int)currentHp} / {(int)maxHp}";
 
                 yield return new WaitForSeconds(0.01f);
             }
+            yield return new WaitForSeconds(1f);
 
-            fillObject_ImageComponent.fillAmount = targetForDecreasing;
+            var battleController = ControllerManager.Instance.GetController<BattleController>();
+
+            battleController.HpAdjustmentObject();
+
+            battleController.NextPhase();
         }
     } 
 }

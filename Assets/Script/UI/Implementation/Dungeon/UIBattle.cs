@@ -125,10 +125,18 @@ namespace Eonix.UI
             skillImageParents.gameObject.SetActive(isActive);
         }
 
+        public void CloseStart()
+        {
+            _animtorComponent.SetBool("isClose", true);
+        }
 
-        #region Hp Adjustment Value
+        public void EndCloseAnimation()
+        {
+            _animtorComponent.SetBool("isClose", false);
+            Close();
 
-        #endregion
+            _animtorComponent.enabled = false;
+        }
 
         public void OnApplicationQuit()
         {
