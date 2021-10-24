@@ -109,7 +109,7 @@ namespace Eonix.Actor
             parentIndex = Enumerable.Repeat(-1, stageSize).ToList();
 
             var index = CurrentMoveMonster.CurrentIndex;
-            var targetIndex = CurrentMoveMonster.TargetHero.CurrentIndex;
+            var targetIndex = CurrentMoveMonster.TargetHero.CurrentIndex; 
             openIndex.Add(index);
 
             gScore[index] = 0;

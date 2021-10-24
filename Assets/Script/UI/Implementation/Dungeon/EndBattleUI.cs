@@ -8,8 +8,11 @@ using System.Linq;
 
 namespace Eonix.UI
 {
+    using SceneType = Define.SceneType;
+
     public class EndBattleUI : UIWindow
-    {
+    { 
+
         private const int maxHeroCount = 3;
 
         #region Script of UIWindow
@@ -29,6 +32,8 @@ namespace Eonix.UI
             SetHero();
 
             base.Open(force);
+
+
         }
 
         #endregion
@@ -83,6 +88,7 @@ namespace Eonix.UI
 
         private List<Hero> heroList = new List<Hero>();
 
+        [SerializeField]
         private List<Hero> liveHeroList = new List<Hero>();
         public List<Hero> LiveHeroList
         {
@@ -90,6 +96,7 @@ namespace Eonix.UI
             set { liveHeroList = value; }
         }
 
+        [SerializeField]
         private List<Hero> deadHeroList = new List<Hero>();
         public List<Hero> DeadHeroList
         {
@@ -97,15 +104,20 @@ namespace Eonix.UI
             set { deadHeroList = value; }
         }
 
+        [SerializeField]
+        private int addExp;
+        public int AddExp
+        {
+            get { return addExp; }
+            set { addExp = value; }
+        }
+
         #endregion
 
         public override void Start()
         {
-            InitObjects();
-
             isOpen = true;
             canCloseESC = true;
-
 
             base.Start();
         }
@@ -163,6 +175,8 @@ namespace Eonix.UI
 
                 InitHeroCard(heroList[i], i);
             }
+
+            SetExpGague();
         }
 
         private void SetBattleResultText()
@@ -188,10 +202,10 @@ namespace Eonix.UI
 
             var heroLevel = hero.HeroInfo.heroLevel;
 
-            var currentExp = hero.HeroInfo.heroCurrentExp;
+            var currentExp = hero.HeroInfo.currentExp;
             var maxExp = hero.HeroInfo.maxExp;
 
-            levelText_TextCompo[count].text = $"Lv.{heroLevel} {currentExp}/{maxExp}";
+            levelText_TextCompo[count].text = $"Lv.{heroLevel} {currentExp} / {maxExp}";
             expGagueObject_ImageCompoList[count].fillAmount = currentExp / maxExp;
         }
 
@@ -200,44 +214,155 @@ namespace Eonix.UI
             heroCardObject_ImageCompoList[count].sprite = Define.SpriteArtPath.sprite(Define.SpriteArtPath.ArtType.Card, "Card_None");
         }
 
-        private float currentFillAmount;
-        private int loopCount = 0;
+        #endregion
 
-        public void SetGauge(int count, int loop, float leftFillAmount)
+        #region Set Exp Bar
+        float[] targetFillAmount = new float[3];
+        
+        [SerializeField]
+        int[] startLevel = new int[3];
+        [SerializeField]
+        float[] startExp = new float[3];
+        [SerializeField]
+        int[] endLevel = new int[3];
+        [SerializeField]
+        float[] endExp = new float[3];
+
+        public void SetExpGague()
         {
-
-            StartCoroutine(ExpBarFilling(count, loop, leftFillAmount));
-        }
-
-        private IEnumerator ExpBarFilling(int count, int loop, float leftAmount)
-        {
-            loopCount = loop;
-
-            for(float f = currentFillAmount; ;)
+            for(int i = 0; i < heroList.Count; i++)
             {
-                if(loopCount != 0)
+                var beforeLevel = heroList[i].HeroInfo.heroLevel;
+
+                startLevel[i] = beforeLevel;
+                
+                var beforeCurrentExp = heroList[i].HeroInfo.currentExp;
+
+                startExp[i] = beforeCurrentExp;
+
+                var beforeMaxExp = heroList[i].HeroInfo.maxExp;
+
+                var remainFillAmount = 1 - (beforeCurrentExp / beforeMaxExp);
+
+                if (liveHeroList.Contains(heroList[i]))
                 {
-                    f += (1 - currentFillAmount) / 100f;
+                    heroList[i].SetExp(AddExp);
                 }
                 else
                 {
-                    f += (leftAmount - currentFillAmount) / 100;
+                    heroList[i].SetExp(AddExp / 2);
                 }
 
-                if(f >= .99f && loopCount == 0)
+                var afterLevel = heroList[i].HeroInfo.heroLevel;
+
+                endLevel[i] = afterLevel;
+
+                var currentExp = heroList[i].HeroInfo.currentExp;
+
+                endExp[i] = currentExp;
+
+                var maxExp = heroList[i].HeroInfo.maxExp;
+
+                if (afterLevel - beforeLevel > 1)
                 {
-                    break;
+                    targetFillAmount[i] = (currentExp / maxExp) + (remainFillAmount) + ((afterLevel - beforeLevel - 1));
                 }
-                else if(f >= .99f && loopCount != -1)
+                else if(afterLevel - beforeLevel == 1)
                 {
-                    loopCount--;
-                    f = 0;
+                    targetFillAmount[i] = (currentExp / maxExp) + remainFillAmount;
+                }
+                else
+                {
+                    targetFillAmount[i] = (currentExp / maxExp) - (beforeCurrentExp / beforeMaxExp);
                 }
 
-                expGagueObject_ImageCompoList[count].fillAmount = f;
-
-                yield return new WaitForSeconds(.01f);
+                targetFillAmount[i] /= 100f;
             }
+
+            StartCoroutine(UpdateExpGague());
+        }
+
+        private IEnumerator UpdateExpGague()
+        {
+            int counter = 0;
+
+            while (counter < 100)
+            {
+
+                for (int i = 0; i < heroList.Count; i++)
+                {
+                    if (expGagueObject_ImageCompoList[i].fillAmount >= 0.99f) { expGagueObject_ImageCompoList[i].fillAmount = 0f; }
+
+                    expGagueObject_ImageCompoList[i].fillAmount += targetFillAmount[i];
+
+                    if (liveHeroList.Contains(heroList[i]))
+                    {
+                        SetExpText(i, AddExp / 100f);
+                    }
+                    else
+                    {
+                        SetExpText(i, AddExp / 200f);
+                    }
+                }
+
+                yield return new WaitForSeconds(0.01f);
+
+                counter++;
+            }
+        }
+
+
+
+        private void SetExpText(int count, float addExp)
+        {
+            if (startLevel[count] >= endLevel[count] && startExp[count] >= endExp[count])
+            {
+                var te = $"Lv. {heroList[count].HeroInfo.heroLevel} " +
+                    $"{heroList[count].HeroInfo.currentExp} / {heroList[count].HeroInfo.maxExp}";
+
+                levelText_TextCompo[count].text = te;
+
+                return;
+            }
+
+            var maxExp = GameManager.SD.sdMaxExpInfos[startLevel[count]].maxExp;
+
+            if(startExp[count] >= maxExp && startLevel[count] < endLevel[count])
+            {
+                startLevel[count]++;
+
+                startExp[count] = 0;
+
+                SetExpText(count, addExp);
+
+                return;
+            }
+
+            startExp[count] += addExp;
+
+            var text = $"Lv. {startLevel[count]} {(int)startExp[count]} / {(int)maxExp}";
+
+            levelText_TextCompo[count].text = text;
+
+        }
+
+        #endregion
+
+        #region Click Button (Push Button)
+
+        public void PushExitButton()
+        {
+            var stageManager = StageManager.Instance;
+            var user = GameManager.User;
+
+            user.boStage.sdStage = GameManager.SD.sdStages.Where(_ => _.num == 1).FirstOrDefault();
+
+            GameManager.Instance.LoadScene(SceneType.InGame, stageManager.ChangeStage(), stageManager.OnChangeStageComplete);
+        }
+        
+        public void PushRetryButton()
+        {
+
         }
 
         #endregion

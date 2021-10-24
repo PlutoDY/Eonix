@@ -7,10 +7,14 @@ using UnityEngine.UI;
 namespace Eonix.Battle {
     public class BattleCurrentStateViewerHelper : MonoBehaviour
     {
+        [SerializeField]
         Text stateViewerObject_TextComponent;
+        [SerializeField]
         Text damagePercent_TextComponent;
 
+        [SerializeField]
         Text heroStatObject_TextComponent;
+        [SerializeField]
         Text monsterStatObject_TextComponent;
 
         public void InitStateObject(Text stateViewerTextComponent, Text damagePercentTextComponent)

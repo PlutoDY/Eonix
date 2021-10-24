@@ -20,7 +20,7 @@ public class BattleCalculateHelper : MonoBehaviour
     public Tuple<int, int, bool> CalculationDice(float rateHit)
     {
         var power = Random.Range(1, 101);
-        var defense = 101-(int)rateHit;
+        var defense = 100-(int)rateHit;
 
         var battleResult = power >= defense ? true : false;
 

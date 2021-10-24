@@ -1505,12 +1505,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -1674,6 +1674,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canCloseESC: 0
   isOpen: 0
+  stateObject_Text: {fileID: 0}
+  damagePercentObject_Text: {fileID: 0}
+  statName_Text: []
   hpBars: []
 --- !u!1 &5905365313947528760
 GameObject:
@@ -2396,6 +2399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 745e31049787b95478dd7ed58f356eda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hpBars: []
 --- !u!114 &7895451655087432181
 MonoBehaviour:
   m_ObjectHideFlags: 0

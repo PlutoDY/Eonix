@@ -81,5 +81,10 @@ namespace Eonix.Controller {
         {
             if (totalControllers.Contains(controller)) totalControllers.Remove(controller);
         }
+
+        public void OnDestroy()
+        {
+            Destroy(this);
+        }
     }
 }

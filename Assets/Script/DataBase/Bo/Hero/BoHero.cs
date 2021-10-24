@@ -16,10 +16,19 @@ namespace Eonix.DB
         public int heroID;
         public bool inParty;
         public int heroLevel;
-        public float heroCurrentExp;
+        public int Hp;
+        public float currentExp;
         public float maxExp;
         public int heroListIndex;
         public int heroPartyIndex;
+        #endregion
+
+        #region Battle Value
+
+        public int atk;
+        public int def;
+        public int currentHp;
+
         #endregion
 
         public BoHero(int index)
@@ -61,10 +70,13 @@ namespace Eonix.DB
                 boHero.heroID = heroID;
                 boHero.inParty = false;
                 boHero.heroLevel = 0;
-                boHero.heroCurrentExp = 0;
+                boHero.currentExp = 0;
+                boHero.Hp = boHero.currentHp = (int)boHero.boHeroStatInfo.Hp + (boHero.heroLevel * (int)boHero.boHeroStatInfo.HpFactor);
                 boHero.heroListIndex = heroListIndex;
                 boHero.heroPartyIndex = -1;
                 boHero.maxExp = GameManager.SD.sdMaxExpInfos[boHero.heroLevel].maxExp;
+                boHero.atk = (int)boHero.boHeroStatInfo.Power + (boHero.heroLevel * (int)boHero.boHeroStatInfo.PowerFactor);
+                boHero.def = (int)boHero.boHeroStatInfo.Defense + (boHero.heroLevel * (int)boHero.boHeroStatInfo.DefenseFactor);
 
                 boHeroes.Add(boHero);
             }
@@ -80,7 +92,7 @@ namespace Eonix.DB
             var heroID = JsonMapper.ToObject<List<int>>(new JsonReader(dtoRetainedHero.heroID));
             var inParty = JsonMapper.ToObject<List<bool>>(new JsonReader(dtoRetainedHero.inParty));
             var heroLevel = JsonMapper.ToObject<List<int>>(new JsonReader(dtoRetainedHero.heroLevel));
-            var heroCurrentExp = JsonMapper.ToObject<List<float>>(new JsonReader(dtoRetainedHero.heroCurrentExp));
+            var currentExp = JsonMapper.ToObject<List<float>>(new JsonReader(dtoRetainedHero.heroCurrentExp));
             var heroListIndex = JsonMapper.ToObject<List<int>>(new JsonReader(dtoRetainedHero.heroListIndex));
             var heroPartyIndex = JsonMapper.ToObject<List<int>>(new JsonReader(dtoRetainedHero.heroPartyIndex));
             var heroNumber = JsonMapper.ToObject<List<int>>(new JsonReader(dtoRetainedHero.heroNumber));
@@ -96,10 +108,14 @@ namespace Eonix.DB
                 boHero.heroID = heroID[i];
                 boHero.inParty = inParty[i];
                 boHero.heroLevel = heroLevel[i];
-                boHero.heroCurrentExp = heroCurrentExp[i];
+                boHero.currentExp = currentExp[i];
                 boHero.heroListIndex = heroListIndex[i];
                 boHero.heroPartyIndex = heroPartyIndex[i];
                 boHero.maxExp = GameManager.SD.sdMaxExpInfos[heroLevel[i]].maxExp;
+
+                boHero.Hp = boHero.currentHp = (int)boHero.boHeroStatInfo.Hp + (boHero.heroLevel * (int)boHero.boHeroStatInfo.HpFactor);
+                boHero.atk = (int)boHero.boHeroStatInfo.Power + (boHero.heroLevel * (int)boHero.boHeroStatInfo.PowerFactor);
+                boHero.def = (int)boHero.boHeroStatInfo.Defense + (boHero.heroLevel * (int)boHero.boHeroStatInfo.DefenseFactor);
 
                 boHeroes.Add(boHero);
             }

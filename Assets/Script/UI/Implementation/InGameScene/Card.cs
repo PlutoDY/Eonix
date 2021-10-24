@@ -145,7 +145,9 @@ namespace Eonix.UI
 
             if(CardType == CardType.Party)
             {
-                CardNumber_Party = IndexSetter.cardIndex++;
+                if (IndexSetter.cardIndex++ > 2) IndexSetter.cardIndex = 0;
+
+                CardNumber_Party = IndexSetter.cardIndex;
 
                 Marker = gameObject.transform.GetChild(2).gameObject;
 

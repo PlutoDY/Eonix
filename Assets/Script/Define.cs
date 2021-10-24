@@ -189,6 +189,7 @@ namespace Eonix.Define
         public static int listIndex = 0;
 
         public static int cardIndex = 0;
+     
     }
 
     public class Battle

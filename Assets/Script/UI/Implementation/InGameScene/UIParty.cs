@@ -53,6 +53,10 @@ namespace Eonix.UI
 
         public override void Open(bool force = false)
         {
+            ValueInit();
+            HeroCurrentStateInit();
+            CardCompoInit_Hero();
+
             base.Open(force);
         }
 

@@ -43,11 +43,13 @@ namespace Eonix.UI
         List<GameObject> dices = new List<GameObject>();
 
         public List<GameObject> Dices { get { return dices; } }
-
+        
+        [SerializeField]
         Text stateObject_Text;
 
         public Text StateObject_Text { get { return stateObject_Text; } }
 
+        [SerializeField]
         Text damagePercentObject_Text;
 
         public Text DamagePercentObject_Text { get { return damagePercentObject_Text; } }
@@ -56,6 +58,7 @@ namespace Eonix.UI
 
         public List<GameObject> Skills { get { return skills; } }
 
+        [SerializeField]
         List<Text> statName_Text = new List<Text>();
 
         public List<Text> StatName_Text { get { return statName_Text; } }

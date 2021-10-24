@@ -83,7 +83,6 @@ namespace Eonix.UI
 
             if (idString.Count == 2)
             {
-                
                 ServerManager.Instance.Login(idString[0], idString[1]);
             }
             

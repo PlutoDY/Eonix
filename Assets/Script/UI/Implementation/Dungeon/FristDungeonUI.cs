@@ -40,7 +40,6 @@ namespace Eonix.UI
             var stageManager = StageManager.Instance;
             var user = GameManager.User;
 
-
             user.boStage.sdStage = GameManager.SD.sdStages.Where(_ => _.num == warpStageIndex).SingleOrDefault();
 
             GameManager.Instance.LoadScene(SceneType.Battle,stageManager.BattleStage(), stageManager.OnChangeBattleSceneComplete);

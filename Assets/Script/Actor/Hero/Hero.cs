@@ -19,52 +19,6 @@ namespace Eonix.Actor
         }
         #endregion
 
-        #region Value for Battle
-        [SerializeField]
-        private float power;
-        public float Power
-        {
-            get { return power; }
-            set 
-            { 
-                power = value; 
-            }
-        }
-
-        [SerializeField]
-        private float defense;
-        public float Defense
-        {
-            get { return defense; }
-            set { defense = value; }
-        }
-
-        [SerializeField]
-        private float currentHp;
-        public float CurrentHp
-        {
-            get { return currentHp; }
-            set 
-            { 
-                currentHp = value;
-
-                if (CurrentHp <= 0)
-                    Dead();
-            }
-        }
-
-        [SerializeField]
-        private float maxHp;
-        public float MaxHp
-        {
-            get { return maxHp; }
-            set { maxHp = value; }
-        }
-
-
-
-        #endregion
-
         #region Value for Animation
 
         [SerializeField]
@@ -141,14 +95,7 @@ namespace Eonix.Actor
 
         public void InitHero()
         {
-            var heroStatInfo = heroInfo.boHeroStatInfo;
-            var heroLevel = heroInfo.heroLevel;
-
             CanMove = true;
-
-            Power = heroStatInfo.Power  + (heroStatInfo.Power * (heroLevel * 0.1f));
-            Defense = heroStatInfo.Defense * (1 + (heroStatInfo.DefenseFactor * heroLevel));
-            MaxHp = CurrentHp = heroStatInfo.Hp * (1 + (heroStatInfo.HpFactor) * heroLevel);
 
             object_AnimatorCompo = GetComponent<Animator>();
             actorController = Controller.ControllerManager.Instance.GetController<ActorController>();
@@ -225,6 +172,37 @@ namespace Eonix.Actor
             startInstantiateTime = Time.time;*/
         }
 
+        #region Exp Setting
+
+        public void SetExp(float getExp)
+        {
+            heroInfo.currentExp += getExp;
+
+            if (heroInfo.currentExp >= heroInfo.maxExp && heroInfo.heroLevel < 10)
+            {
+                LevelUp();
+            }
+        }
+
+        public void LevelUp()
+        {
+            heroInfo.currentExp -= heroInfo.maxExp;
+
+            heroInfo.heroLevel++;
+
+            if(heroInfo.heroLevel == 10) 
+            { 
+                heroInfo.currentExp = int.MinValue;
+                heroInfo.maxExp = int.MaxValue;
+            }
+
+            heroInfo.maxExp = GameManager.SD.sdMaxExpInfos[heroInfo.heroLevel].maxExp;
+
+            SetExp(0);
+        }
+
+        #endregion
+
         #region Animation End
         public void EndAnimation_NomalSkill()
         {
@@ -259,53 +237,6 @@ namespace Eonix.Actor
             actorController.heroList.Remove(this);
 
             actorController.deadHeroList.Add(this);
-
-            /*var battleController = Controller.ControllerManager.Instance.GetController<Battle.BattleController>();
-
-            battleController.CheckEndGame();*/
-        }
-
-        private float currentPercent = 0.0f;
-        private int levelUpCount = 0;
-
-        public Tuple<int, float> AddExp(float AddExp)
-        {
-            currentPercent = 0.0f;
-            levelUpCount = 0;
-
-            currentPercent = SetExp(AddExp);
-
-            if (heroInfo.heroCurrentExp >= HeroInfo.maxExp)
-            {
-                LevelUp();
-                currentPercent = SetExp(AddExp);
-            }
-
-            DB.DataBaseManager.Instance.UpdateMyData<DB.DtoRetainedHero>(Util.SerializationUtil.DtoToParam(new DB.DtoRetainedHero()));
-
-            return new Tuple<int, float>(levelUpCount, currentPercent);
-        }
-
-        public float SetExp(float addExp)
-        {
-            Debug.Log($"AddExp : {addExp}");
-
-            Debug.Log(HeroInfo.heroCurrentExp);
-
-            HeroInfo.heroCurrentExp += addExp;
-
-            Debug.Log(HeroInfo.heroCurrentExp);
-
-            return HeroInfo.heroCurrentExp / HeroInfo.maxExp;
-        }
-
-        public void LevelUp()
-        {
-            levelUpCount++;
-
-            HeroInfo.heroLevel++;
-            HeroInfo.heroCurrentExp -= heroInfo.maxExp;
-            HeroInfo.maxExp = GameManager.SD.sdMaxExpInfos[HeroInfo.heroLevel].maxExp;
         }
     }
 }

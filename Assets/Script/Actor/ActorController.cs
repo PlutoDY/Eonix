@@ -5,6 +5,7 @@ using Eonix.Stage;
 using Eonix.DB;
 using Eonix.SD;
 using Eonix.Battle;
+using Eonix.UI;
 using System.Linq;
 using System;
 
@@ -64,6 +65,7 @@ namespace Eonix.Actor
 
         #region Value of Monster
 
+        [SerializeField]
         private bool endMonsterMove;
         public bool EndMonsterMove
         {
@@ -72,15 +74,29 @@ namespace Eonix.Actor
             {
                 endMonsterMove = value;
 
-                if (EndMonsterMove && (monsterMoveCounter < monsterList.Count))
-                {
-                    StartMonsterMove();
-                }
-                else if (monsterMoveCounter >= monsterList.Count)
-                {
-                    monsterMoveCounter = 0;
-                    StartHeroMove();
-                }
+                NextTurn();
+            }
+        }
+
+        private void NextTurn()
+        {
+            var battleController = ControllerManager.Instance.GetController<BattleController>();
+
+            if (heroList.Count <= 0 || monsterList.Count <= 0)
+            {
+                battleController.EndGame(heroList, deadHeroList);
+                return;
+            }
+
+
+            if (EndMonsterMove && (monsterMoveCounter < monsterList.Count))
+            {
+                StartMonsterMove();
+            }
+            else if (monsterMoveCounter >= monsterList.Count)
+            {
+                monsterMoveCounter = 0;
+                StartHeroMove();
             }
         }
 
@@ -150,8 +166,6 @@ namespace Eonix.Actor
 
         public void HeroMove(MouseEvent evt)
         {
-            Debug.Log("CLICK");
-
             ray = stageCam.ScreenPointToRay(Input.mousePosition);
 
             if(Physics.Raycast(ray, out hit, int.MaxValue, _mask))
@@ -230,6 +244,12 @@ namespace Eonix.Actor
         {
             var rendererCompo = cell.Checker.GetComponentInChildren<Renderer>();
 
+            if (monsterList.Count == 0)
+            {
+                cell.Checker.transform.position = new Vector3(cell.Checker.transform.position.x, 0, cell.Checker.transform.position.z);
+                rendererCompo.material.color = Color.red;
+            }
+
             foreach(Monster monster in monsterList)
             {
                 cell.Checker.transform.position = new Vector3(cell.Checker.transform.position.x, 0, cell.Checker.transform.position.z);
@@ -302,7 +322,9 @@ namespace Eonix.Actor
         {
             var canMoveHeroCount = heroList.Where(_ => _.CanMove == true).Count();
 
-            if(canMoveHeroCount == 0 || force)
+            var canAttackMonsterCount = monsterList.Count();
+
+            if(canMoveHeroCount == 0 || force || canAttackMonsterCount == 0)
             {
                 monsterList.ForEach(_ => _.CanMove = true);
                 EndMonsterMove = true;
@@ -330,5 +352,15 @@ namespace Eonix.Actor
 
         #endregion
 
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            stageCam = null;
+
+            Destroy(this);
+
+        }
     }
 }

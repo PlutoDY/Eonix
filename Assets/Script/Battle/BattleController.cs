@@ -146,7 +146,6 @@ namespace Eonix.Battle
             battleHeroSkillHelper = GetComponent<BattleHeroSkillHelper>();
             battleHpHelper = GetComponent<BattleHpHelper>();
 
-
             base.Start();
 
             InstantiateUI();
@@ -228,7 +227,6 @@ namespace Eonix.Battle
             path = PrefabsPath.UIPath(PrefabsUIs.EndBattleUI);
             instantiatedObject = Instantiate(RM.Instance.LoadObject(path)).gameObject;
             endBattleUI = instantiatedObject.GetComponent<EndBattleUI>();
-            endBattleUI.InitWindow();
 
             InitDices();
 
@@ -301,10 +299,10 @@ namespace Eonix.Battle
                 switch (currentBattlePhase)
                 {
                     case BattlePhase.Power_Resistance:
-                        tu = battleCalculateHelper.CalculationDice(hero.Power, monster.DefiniteAttackStat);
+                        tu = battleCalculateHelper.CalculationDice(hero.HeroInfo.atk, monster.DefiniteAttackStat);
                         break;
                     case BattlePhase.Power_Defense:
-                        tu = battleCalculateHelper.CalculationDice(hero.Power, monster.Defense);
+                        tu = battleCalculateHelper.CalculationDice(hero.HeroInfo.atk, monster.Defense);
                         break;
                     case BattlePhase.SkillAttack:
                         tu = battleCalculateHelper.CalculationDice(currentCastingSkill.HitRate);
@@ -349,9 +347,6 @@ namespace Eonix.Battle
 
         public void NextPhase()
         {
-
-            Debug.Log($"currnetBattlePhase = {currentBattlePhase}");
-
             if(isWin && ((currentBattlePhase == BattlePhase.Power_Resistance) || (currentBattlePhase == BattlePhase.Power_Defense)))
             {
                 battleCurrentStateViewerHelper.SetStateText(State.Start);
@@ -383,8 +378,10 @@ namespace Eonix.Battle
             skillDamagePercent = value * 0.01f;
 
             skillHitRatePercent[0] = value;
+
             if (force) skillHitRatePercent[1] = 100;
             else skillHitRatePercent[1] = ((value - 5) >= 0) ? value - 5 : 0;
+
             skillHitRatePercent[2] = ((value + 10) <= 100) ? value + 10 : 100;
 
             battleHeroSkillHelper.SetSkillsExplain(skillDamagePercent, skillHitRatePercent);
@@ -392,8 +389,6 @@ namespace Eonix.Battle
 
         private void CheckBattlePhase()
         {
-            Debug.Log($"Current : {currentBattlePhase}");
-
             switch (currentBattlePhase)
             {
                 case BattlePhase.Power_Resistance:
@@ -464,15 +459,13 @@ namespace Eonix.Battle
             }
             else
             {
-                battleHpHelper.SetHeroHpBar(Hero.CurrentHp ,Hero.MaxHp, monsterGiveDamage);
+                battleHpHelper.SetHeroHpBar(Hero.HeroInfo.currentHp ,Hero.HeroInfo.Hp, monsterGiveDamage);
             }
 
         }
 
         public void StartCloseBattleUI()
         {
-            HpAdjustmentObject();
-
             uIBattle.CloseStart();
 
             hero.CanMove = false;
@@ -487,14 +480,29 @@ namespace Eonix.Battle
 
         public void HpAdjustmentObject()
         {
-            if(attackSuccessCount != 0)
+            if (attackSuccessCount != 0)
             {
                 monster.Hp -= heroGiveDamage;
             }
-            else {
-                hero.CurrentHp -= monsterGiveDamage;
+            else
+            {
+                hero.HeroInfo.currentHp -= (int)monsterGiveDamage;
             }
         }
+        #endregion
+
+        #region End Battle Method
+
+        public void EndGame(List<Hero> liveHeroes, List<Hero> deadHeroes)
+        {
+            endBattleUI.AddExp = (int)currentGetExp;
+
+            endBattleUI.LiveHeroList = liveHeroes;
+            endBattleUI.DeadHeroList = deadHeroes;
+
+            endBattleUI.Open();
+        }
+
         #endregion
     }
 }

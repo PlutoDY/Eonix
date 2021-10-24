@@ -16,7 +16,7 @@ namespace Eonix.Controller
             ControllerManager.Instance.AddTotalController(this);
         }
 
-        public void OnDestroy()
+        public virtual void OnDestroy()
         {
             ControllerManager.Instance.RemoveController(this);
         }

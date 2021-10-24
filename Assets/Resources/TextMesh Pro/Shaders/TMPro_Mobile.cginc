@@ -38,7 +38,7 @@ pixel_t VertShader(vertex_t input)
     float bold = step(input.texcoord1.y, 0);
 
     float4 vert = input.position;
-    vert.x += _VertexOffsetX;
+    vert.x += _VertpffsetX;
     vert.y += _VertexOffsetY;
 
     float4 vPosition = UnityObjectToClipPos(vert);

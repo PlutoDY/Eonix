@@ -7,6 +7,7 @@ using Eonix.Actor;
 namespace Eonix.Battle {
     public class BattleHpHelper : MonoBehaviour
     {
+        [SerializeField]
         List<HpBar> hpBars = new List<HpBar>();
 
         public void HpBarsInit(List<GameObject> gObjList)
@@ -25,7 +26,7 @@ namespace Eonix.Battle {
 
         public void ResetImageAndText(Hero hero, Monster monster)
         {
-            hpBars[0].InitImageAndText(hero.CurrentHp, hero.MaxHp);
+            hpBars[0].InitImageAndText(hero.HeroInfo.currentHp, hero.HeroInfo.Hp);
             hpBars[1].InitImageAndText(monster.Hp, monster.Monsterinfo.boMonsterStatInfo.MaxHp);
         }
 

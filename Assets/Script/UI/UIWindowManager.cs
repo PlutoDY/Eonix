@@ -129,6 +129,5 @@ namespace Eonix.UI
 
             return targetWindow;
         }
-
     }
 }

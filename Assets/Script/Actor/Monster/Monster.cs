@@ -33,6 +33,7 @@ namespace Eonix.Actor
             set { defense = value; }
         }
 
+        [SerializeField]
         private int definiteAttackStat;
         public int DefiniteAttackStat
         {

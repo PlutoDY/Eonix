@@ -76,6 +76,15 @@ namespace Eonix.Network
 #if UNITY_EDITOR
             GameManager.Instance.titleController.LoadComplete = true;
 #endif
+            Backend.Utils.GetLatestVersion(callback:c =>
+            {
+                if (c.IsSuccess())
+                {
+                    var com = c.GetReturnValuetoJSON()["version"].ToString();
+
+                    if(com == Application.version) { GameManager.Instance.titleController.LoadComplete = true; }
+                }
+            });
         }
 
         public void Login(string id, string password)
@@ -84,7 +93,6 @@ namespace Eonix.Network
 
             Backend.BMember.CustomLogin(id, password, callback =>
             {
-
                 uILogin.LoginCaseCheck(int.Parse(callback.GetStatusCode()));
 
 
@@ -93,7 +101,9 @@ namespace Eonix.Network
                 {
                     var bro = Backend.GameData.GetMyData("Account", new Where(), 10);
 
-                    if(bro.GetReturnValuetoJSON()["rows"].Count == 0)
+                    uILogin.loginUIInputFieldList[0].text = "SUCCESS";
+
+                    if (bro.GetReturnValuetoJSON()["rows"].Count == 0)
                     {
                         isSignUp = true;
                     }
@@ -106,6 +116,8 @@ namespace Eonix.Network
                 }
                 else
                 {
+                    uILogin.loginUIInputFieldList[0].text = callback.GetMessage();
+
                     Debug.Log($"Login Faild\n{callback}");
                 }
             });
