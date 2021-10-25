@@ -153,8 +153,6 @@ namespace Eonix.UI
         // Sign Up Button을 클릭할 때...
         public void TrySignUp()
         {
-            Debug.Log(UIWindowManager.Instance.GetWindow<UISignup>());
-
             if (UIWindowManager.Instance.GetWindow<UISignup>() == null)
             {
                 Instantiate(SignUpUI); // = UIWindowManager에 등록을 한 것입니다.

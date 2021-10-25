@@ -86,13 +86,13 @@ namespace Eonix.UI
         {
             temp = true;
 
+            // 모든 입력 필드가 형식에 맞게 쓰여져 있는지 확인
             foreach(InputField inputField in SignUpInputField)
             {
                 Temp = CheckInputField(inputField);
             }
 
-            Debug.Log($"Temp : {temp}");
-
+            // 비밀번호 입력란과 비밀번호 확인 입력란의 입력이 같은지 확인 한 후 회원가입 시도
             if (Temp)
             {
                 if (CheckPasswordisMatch())

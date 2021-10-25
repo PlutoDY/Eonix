@@ -284,7 +284,7 @@ namespace Eonix.UI
             clickedHero.inParty = false;
             clickedHero.heroPartyIndex = -1;
 
-            clickedHero.heroListIndex = Define.IndexSetter.listIndex;
+            clickedHero.heroListIndex = Define.IndexSetter.listIndex++;
 
             HeroCurrentStateInit();
             CardCompoInit_Hero();
