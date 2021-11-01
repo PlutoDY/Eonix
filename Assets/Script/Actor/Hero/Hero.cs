@@ -53,6 +53,16 @@ namespace Eonix.Actor
         private GameObject skillEffectObject;
         #endregion
 
+        #region Speed Value
+
+        public bool upSpeed = false;
+
+        private const float nomalSpeed = 2.5f;
+
+        private const float upgardeSpeed = 5f;
+
+        #endregion
+
         #region Value of Move
         [SerializeField]
         private Vector3 moveEndVector;
@@ -120,7 +130,14 @@ namespace Eonix.Actor
 
         public void MoveStart()
         {
-            gameObject.transform.position = Vector3.MoveTowards(transform.position,MoveEndVector,2.5f*Time.deltaTime);
+            if (!upSpeed)
+            {
+                gameObject.transform.position = Vector3.MoveTowards(transform.position, MoveEndVector, nomalSpeed * Time.deltaTime);
+            }
+            else
+            {
+                gameObject.transform.position = Vector3.MoveTowards(transform.position, MoveEndVector, upgardeSpeed * Time.deltaTime);
+            }
 
             if (gameObject.transform.position == MoveEndVector) MoveEnd();
         }
