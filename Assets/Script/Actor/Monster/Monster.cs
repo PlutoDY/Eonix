@@ -149,7 +149,7 @@ namespace Eonix.Actor
 
         private void Moving()
         {
-            gameObject.transform.position = Vector3.MoveTowards(transform.position, MoveEndVector, 2.5f * Time.deltaTime);
+            gameObject.transform.position = Vector3.MoveTowards(transform.position, MoveEndVector, 4f * Time.deltaTime);
 
             if(gameObject.transform.position == MoveEndVector)
             {

@@ -302,6 +302,7 @@ namespace Eonix.Actor
         {
             clickedHero.MoveEndVector = clickedCell.transform.position;
             clickedHero.MoveIndex = clickedCell.Index;
+            clickedHero.upSpeed = isSpeedUp;
         }
 
         private void StartAttack()
@@ -352,6 +353,15 @@ namespace Eonix.Actor
 
         #endregion
 
+        #region Check SpeedUp Button Click
+
+        private bool isSpeedUp = false;
+
+        public void ChangeSpeedValue(bool isSpeedUp)
+        {
+            this.isSpeedUp = isSpeedUp;
+        }
+        #endregion
 
         public override void OnDestroy()
         {
