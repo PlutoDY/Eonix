@@ -55,7 +55,7 @@ namespace Eonix.SD
 
             private void LoadDataIds()
             {
-                Backend.Chart.GetChartList(callback =>
+                Backend.Chart.GetChartListV2(callback =>
                 {
                     if (callback.IsSuccess())
                     {

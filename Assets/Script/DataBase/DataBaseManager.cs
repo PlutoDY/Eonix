@@ -57,7 +57,7 @@ namespace Eonix.DB
 
             var param = SerializationUtil.DtoToParam<T>(dtoData);
 
-            Backend.GameData.Update(dbName, inDate, param, callback =>
+            Backend.GameData.UpdateV2(dbName, inDate, Backend.UserInDate, param, callback =>
             {
                 if (callback.IsSuccess())
                 {

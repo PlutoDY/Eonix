@@ -7,12 +7,14 @@ using Eonix.Define;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using LitJson;
 
 namespace Eonix.Network
 {
     public class ServerManager : SingleTon<ServerManager>
     {
-        public bool isSignUp;
+        public bool isFirstLogin;
 
         public DtoUserInfo userInfo;
 
@@ -31,7 +33,6 @@ namespace Eonix.Network
         {
             if (Backend.IsInitialized)
             {
-
                 Backend.AsyncPoll();
 
                 if (SendQueue.IsInitialize)
@@ -56,8 +57,7 @@ namespace Eonix.Network
 
         public void Initialize()
         {
-
-            Backend.InitializeAsync(true, callback =>
+            Backend.InitializeAsync(true, true, callback =>
             {
                 if (callback.IsSuccess())
                 {
@@ -95,24 +95,31 @@ namespace Eonix.Network
             {
                 uILogin.LoginCaseCheck(int.Parse(callback.GetStatusCode()));
 
-
-
                 if (callback.IsSuccess())
                 {
                     var bro = Backend.GameData.GetMyData("Account", new Where(), 10);
 
+                    var jData = bro.GetReturnValuetoJSON();
+
                     uILogin.loginUIInputFieldList[0].text = "SUCCESS";
 
-                    if (bro.GetReturnValuetoJSON()["rows"].Count == 0)
+                    if (jData["rows"].Count == 0)
                     {
-                        isSignUp = true;
+                        isFirstLogin = true;
+
+                        InsertUserInfo();
+
+                        bro = Backend.GameData.GetMyData("Account", new Where(), 10);
+                        jData = bro.GetReturnValuetoJSON();
                     }
                     else
                     {
-                        isSignUp = false;
+                        isFirstLogin = false;
                     }
 
-                    GetUserInfo();
+                    userInfo = SerializationUtil.JsonToObject<DtoUserInfo>(jData["rows"][0], DeserializeType.DTO);
+
+                    GameManager.Instance.titleController.LoadComplete = true;
                 }
                 else
                 {
@@ -162,20 +169,25 @@ namespace Eonix.Network
             });
         }
 
-        public void GetUserInfo()
-        {
+        private void InsertUserInfo() {
 
-            Backend.BMember.GetUserInfo(callback =>
+            var bro = Backend.BMember.GetUserInfo().GetReturnValuetoJSON()["row"];
+
+            Param p = new Param
             {
-                if (callback.IsSuccess())
+                {"nickname", bro["nickname"]},
+                {"subscriptionType", bro["subscriptionType"]}
+            };
+
+            Backend.GameData.Insert("Account", p, callback =>
+            {
+                if(callback.IsSuccess())
                 {
-                    userInfo = SerializationUtil.JsonToObject<DtoUserInfo>(callback.GetReturnValuetoJSON()["row"], DeserializeType.DefinedDtoByBackend);
-                        
-                    GameManager.Instance.titleController.LoadComplete = true;
+                    Debug.Log($"Insert Success");
                 }
                 else
                 {
-                    Debug.Log($" ### Get user Info Failed ### \n{callback}");
+                    Debug.Log($"Insert Fail");
                 }
             });
         }

@@ -17,7 +17,7 @@ namespace Eonix.DB
 
         public void LoaduserData(Action complete = null)
         {
-            if(ServerManager.Instance.isSignUp)
+            if(ServerManager.Instance.isFirstLogin)
             {
                 WriteDefaultUserData(complete);
                 return;

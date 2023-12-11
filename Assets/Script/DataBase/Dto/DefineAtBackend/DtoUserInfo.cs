@@ -9,10 +9,8 @@ namespace Eonix.DB
     [Serializable]
     public class DtoUserInfo : DtoBase
     {
-        public string contryCode;
         public string nickname;
         public string inDate;
-        public string emailForFindPassword;
         public string subscriptionType;
     }
 }
